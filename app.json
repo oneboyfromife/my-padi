@@ -3,19 +3,19 @@
     "scheme": "acme",
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/images/favicon.png"
-    },
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/images/adaptive-icon.png",
-    "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "favicon": "./assets/favicon.png"
     },
     "name": "My Padi",
     "slug": "dev-job",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/adaptive-icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -27,10 +27,15 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.oneboyfromife.dev-job"
+      "package": "com.oneboyfromife.mypadi"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c0609c99-2b65-44ec-bf84-814a3650f2eb"
+      }
     }
   }
 }
