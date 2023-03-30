@@ -1,8 +1,9 @@
-import { Stack, useRouter, useSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import {Stack, useRouter, useSearchParams} from "expo-router";
+import {useCallback, useState} from "react";
 import {
   View,
   Text,
+  Share,
   SafeAreaView,
   ScrollView,
   ActivityIndicator,
@@ -17,7 +18,7 @@ import {
   ScreenHeaderBtn,
   Specifics,
 } from "../../components";
-import { COLORS, icons, SIZES } from "../../constants";
+import {COLORS, icons, SIZES} from "../../constants";
 import useFetch from "../../hook/useFetch";
 
 const tabs = ["About", "Qualifications", "Responsibilities"];
@@ -26,7 +27,7 @@ const JobDetails = () => {
   const params = useSearchParams();
   const router = useRouter();
 
-  const { data, isLoading, error, refetch } = useFetch("job-details", {
+  const {data, isLoading, error, refetch} = useFetch("job-details", {
     job_id: params.id,
   });
 
@@ -35,17 +36,36 @@ const JobDetails = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    refetch()
-    setRefreshing(false)
+    refetch();
+    setRefreshing(false);
   }, []);
 
+  const onShare = async () => {
+    try {
+      const result = await Share.share({
+        message:
+          "React Native | A framework for building native apps using React",
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      Alert.alert(error.message);
+    }
+  };
 
   const displayTabContent = () => {
     switch (activeTab) {
       case "Qualifications":
         return (
           <Specifics
-            title='Qualifications'
+            title="Qualifications"
             points={data[0].job_highlights?.Qualifications ?? ["N/A"]}
           />
         );
@@ -58,7 +78,7 @@ const JobDetails = () => {
       case "Responsibilities":
         return (
           <Specifics
-            title='Responsibilities'
+            title="Responsibilities"
             points={data[0].job_highlights?.Responsibilities ?? ["N/A"]}
           />
         );
@@ -69,39 +89,61 @@ const JobDetails = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+    <SafeAreaView style={{flex: 1, backgroundColor: COLORS.lightWhite}}>
       <Stack.Screen
         options={{
-          headerStyle: { backgroundColor: COLORS.lightWhite },
+          headerStyle: {backgroundColor: COLORS.lightWhite},
           headerShadowVisible: false,
           headerBackVisible: false,
           headerLeft: () => (
             <ScreenHeaderBtn
               iconUrl={icons.left}
-              dimension='60%'
+              dimension="60%"
               handlePress={() => router.back()}
             />
           ),
           headerRight: () => (
-            <ScreenHeaderBtn iconUrl={icons.share} dimension='60%' />
+            <TouchableOpacity
+              style={{
+                width: 40,
+                height: 40,
+                backgroundColor: COLORS.white,
+                borderRadius: SIZES.small / 1.25,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={onShare}
+            >
+              <Image
+                source={iconUrl}
+                resizeMode="cover"
+                style={{
+                  width: "60%",
+                  height: "60%",
+                  borderRadius: SIZES.small / 1.25,
+                }}
+              />
+            </TouchableOpacity>
           ),
           headerTitle: "",
         }}
       />
 
       <>
-        <ScrollView showsVerticalScrollIndicator={false}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {isLoading ? (
-            <ActivityIndicator size='large' color={COLORS.primary} />
+            <ActivityIndicator size="large" color={COLORS.primary} />
           ) : error ? (
             <Text>Something went wrong</Text>
           ) : data.length === 0 ? (
             <Text>No data available</Text>
           ) : (
-            <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
+            <View style={{padding: SIZES.medium, paddingBottom: 100}}>
               <Company
                 companyLogo={data[0].employer_logo}
                 jobTitle={data[0].job_title}
@@ -120,7 +162,12 @@ const JobDetails = () => {
           )}
         </ScrollView>
 
-        <JobFooter url={data[0]?.job_google_link ?? 'https://careers.google.com/jobs/results/'} />
+        <JobFooter
+          url={
+            data[0]?.job_google_link ??
+            "https://careers.google.com/jobs/results/"
+          }
+        />
       </>
     </SafeAreaView>
   );
